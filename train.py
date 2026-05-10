@@ -7,7 +7,7 @@ from sklearn.metrics import mean_absolute_error
 melbourne_data = pd.read_csv('melb_data.csv')
 
 # feature selected
-melbourne_features = ['Rooms', 'Bathroom', 'Landsize', 'Lattitude', 'Longtitude']
+melbourne_features = ['Rooms', 'Bathroom', 'Landsize', 'Lattitude', 'Longtitude', 'Car', 'YearBuilt']
 
 # variables
 y = melbourne_data.Price
