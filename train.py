@@ -5,6 +5,9 @@ from sklearn.metrics import mean_absolute_error
 
 # read data and store data in Dataframe titled melbourne_data
 melbourne_data = pd.read_csv('melb_data.csv')
+melbourne_data = melbourne_data.set_index("Address")
+melbourne_data.to_csv('melbourne.csv')
+print(melbourne_data.head())
 
 # feature selected
 melbourne_features = ['Rooms', 'Bathroom', 'Landsize', 'Lattitude', 'Longtitude', 'Car', 'YearBuilt']
@@ -23,3 +26,9 @@ melbourne_model.fit(train_X, train_y)
 predicted_y = melbourne_model.predict(test_X)
 
 print(f"the average difference between observed values, and predicted values is: {mean_absolute_error(test_y, predicted_y)}")
+
+output = pd.DataFrame({'Predicted Price': predicted_y})
+
+
+
+output.to_csv('submission.csv', index=True)
