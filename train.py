@@ -15,9 +15,6 @@ X = melb_df[features]
 
 # Split data into train and test
 train_X, test_X, train_y, test_y = train_test_split(X, y, train_size=0.8, random_state=0)
-print("before:")
-print(train_X.shape)
-print(test_X.shape)
 
 # Missing Values: Method 1
 missing_value_columns = [col for col in train_X.columns if train_X[col].isnull().any()]
@@ -25,6 +22,5 @@ missing_value_columns = [col for col in train_X.columns if train_X[col].isnull()
 train_X = train_X.drop(missing_value_columns, axis=1)
 test_X = test_X.drop(missing_value_columns, axis=1)
 
-print("after:")
-print(train_X.shape)
-print(test_X.shape)
+model_mae = model_eval_mae(train_X, test_X, train_y, test_y)
+print(model_mae)
