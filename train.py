@@ -1,33 +1,37 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error
-from sklearn.ensemble import RandomForestRegressor
-from model_ev import model_eval_mae
 from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder
 
 
-melb_df = pd.read_csv('melb_data.csv', index_col=False)
 my_imputer = SimpleImputer()
-# Feature selection
-features = ['Rooms', 'Distance', 'Postcode', 'Bedroom2', 'Bathroom', 'Car', 'Landsize', 'Lattitude', 'Longtitude', 'BuildingArea']
 
-# Predictor and Predicted
-y = melb_df['Price']
-X = melb_df[features]
+# Read data
+df = pd.read_csv('melb_data.csv')
 
-# Split data into train and test
-train_X, test_X, train_y, test_y = train_test_split(X, y, train_size=0.8, random_state=0)
+# Find columns with int or float dtype
+num_cols = [col for col in df.columns if ((df[col].dtype == 'int') or df[col].dtype == 'float')]
 
-# Missing Values: Method 1
-missing_value_columns = [col for col in train_X.columns if train_X[col].isnull().any()]
+# find columns with categorical values
+categorical_cols = [col for col in df.columns if ((df[col].dtype == 'str') and (df[col].nunique() <= 10))]
 
-imputed_train_X = pd.DataFrame(my_imputer.fit_transform(train_X))
-imputed_test_X = pd.DataFrame(my_imputer.fit_transform(test_X))
 
-imputed_train_X.columns = train_X.columns
-imputed_test_X.columns = test_X.columns
-print(imputed_train_X)
-print(imputed_test_X)
+refined_cols = num_cols + categorical_cols
 
-model_mae = model_eval_mae(imputed_train_X, imputed_test_X, train_y, test_y)
-print(model_mae)
+df_num_cols = df[refined_cols]
+
+# Define predictor and predictors
+y = df.Price
+X = df_num_cols.drop(['Price'], axis='columns')
+
+# List of predictors with missing values
+missing_value_cols = [col for col in X.columns if X[col].isnull().any()]
+print(missing_value_cols)
+X = X.drop(missing_value_cols, axis='columns')
+
+
+# Split data into training vs test data
+train_X, test_X, train_y, test_y = train_test_split(X, y, test_size=0.2, train_size=0.8, random_state=0)
+
+# For simplicity we drop missing columns
+print(train_X[categorical_cols])
